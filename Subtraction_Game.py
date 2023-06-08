@@ -40,7 +40,7 @@ def minimax(state:int, depth:int, maximizing_player:bool) :
                 #If the move value is larger than state, we don't do anything
                 #This if statement indicates that we already have the answer in previous rounds
                 break
-            new_score = minimax(state - move, depth - 1, False)[3]
+            new_score = minimax(state - move, depth - 1, False)[3] + ((state - move) % 4 == 0)
             if new_score > max_score:
                 max_score = new_score
                 best_move = move
@@ -54,18 +54,32 @@ def minimax(state:int, depth:int, maximizing_player:bool) :
                 #If the move value is larger than state, we don't do anything
                 #This if statement indicates that we already have the answer in previous rounds
                 break
-            new_score = minimax(state - move, depth - 1, True)[3]
+            new_score = minimax(state - move, depth - 1, True)[3] - ((state - move) % 4 == 0)
             if new_score < min_score:
                 min_score = new_score
                 best_move = move
         result = (state, depth, maximizing_player, min_score, best_move)
         return(result)
     
+def print_minimax(state:int, depth:int, maximizing_player:bool):
+    '''
+    This is simply a print wrapper for function minimax().
+    The print functionality shouldn't be placed inside the recursive function itself,
+    since it will be one line of print out at each recursive call
+    '''
+    print(minimax(state, depth, maximizing_player))
+    return
+    
+    
 
 def main():
-    print(minimax(5, 5, True))
-    print(minimax(7, 7, True))
-    print(minimax(15, 5, True))
+    print_minimax(5, 5, True)
+    print_minimax(6, 6, True)
+    print_minimax(7, 7, True)
+    print_minimax(8, 8, True)
+    print_minimax(9, 9, True)
+    print_minimax(10, 10, True)
+    print_minimax(15, 5, True)
 
 if __name__ == "__main__":
     main()      
