@@ -5,7 +5,6 @@ def minimax(state:int, depth:int, maximizing_player:bool) :
     """
     A recursive function implementing the Minimax search algorithm on a Subtraction Game.
     Score: 1 - maximizing player wins
-    Score: 0 - a tie
     Score: -1 - minimizing player wins
     
     Parameters:
@@ -14,21 +13,27 @@ def minimax(state:int, depth:int, maximizing_player:bool) :
     maximizing_player (bool): A boolean indicating whether the current player is the maximizing player.
 
     Returns:
-    int: The optimal score for the current player.
-
-    The function also prints a tuple of [state, depth, maximizing_player, best_score, best_move] 
-    before returning the optimal score for the current player.
+    The function prints a tuple of [state, depth, maximizing_player, best_score, best_move] 
+    before returning this tuple for the current player.
     """
     ## Baseline Part
     # There is no stone left, game is over(Also the last step in recursioin)
     if state == 0:
-        result = (state, depth, maximizing_player, 1 if maximizing_player else -1, 0)
+        result = (state, depth, maximizing_player, -1 if maximizing_player else 1, 0)
+        print(result)
         return(result)
     
-    # The depth limit is reached, return a tie(Also the last step in recursioin)
     if depth == 0:
-        #The best move = 1 here doesn't mean anything, it's a garbage return since we don't know the game state
-        result = (state, depth, maximizing_player, 0, 1)
+        #This was my original implementation: result = (state, depth, maximizing_player, -1, 1)
+        #result = (state, depth, maximizing_player, -1, 1)
+        #The following one is the improved version:
+        #If the move is divisible by 4, the maximizing player will lose
+        #If the move is not divisible by 4, the maximizing player try to make the remaining stones divisible by 4
+        if (state % 4 == 0):
+            result = (state, depth, maximizing_player, -1 if maximizing_player else 1, 1)
+        else:
+            result = (state, depth, maximizing_player, 1 if maximizing_player else -1, (state % 4))
+        print(result)
         return(result)
     
     ## Recursive Part
@@ -40,11 +45,12 @@ def minimax(state:int, depth:int, maximizing_player:bool) :
                 #If the move value is larger than state, we don't do anything
                 #This if statement indicates that we already have the answer in previous rounds
                 break
-            new_score = minimax(state - move, depth - 1, False)[3] + ((state - move) % 4 == 0)
+            new_score = minimax(state - move, depth - 1, False)[3]
             if new_score > max_score:
                 max_score = new_score
                 best_move = move
         result = (state, depth, maximizing_player, max_score, best_move)
+        print(result)
         return(result)
     else:
         min_score = 100
@@ -54,32 +60,20 @@ def minimax(state:int, depth:int, maximizing_player:bool) :
                 #If the move value is larger than state, we don't do anything
                 #This if statement indicates that we already have the answer in previous rounds
                 break
-            new_score = minimax(state - move, depth - 1, True)[3] - ((state - move) % 4 == 0)
+            new_score = minimax(state - move, depth - 1, True)[3]
             if new_score < min_score:
                 min_score = new_score
                 best_move = move
         result = (state, depth, maximizing_player, min_score, best_move)
+        print(result)
         return(result)
-    
-def print_minimax(state:int, depth:int, maximizing_player:bool):
-    '''
-    This is simply a print wrapper for function minimax().
-    The print functionality shouldn't be placed inside the recursive function itself,
-    since it will be one line of print out at each recursive call
-    '''
-    print(minimax(state, depth, maximizing_player))
-    return
-    
-    
 
 def main():
-    print_minimax(5, 5, True)
-    print_minimax(6, 6, True)
-    print_minimax(7, 7, True)
-    print_minimax(8, 8, True)
-    print_minimax(9, 9, True)
-    print_minimax(10, 10, True)
-    print_minimax(15, 5, True)
+    minimax(5, 5, True)
+    #minimax(7, 7, True)
+    #minimax(8, 8, True)
+    #minimax(15, 5, True)
+    #minimax(12, 5, True)
 
 if __name__ == "__main__":
     main()      
